@@ -45,12 +45,11 @@ public class ConsumerMessageService {
         logger.info( this.getClass().getSimpleName());
         logger.info("Received message of type: " + message.getClass().getSimpleName());
         logger.info("Received message :" + message);
-        MessageUtils.checkMessageType(message);
+        //MessageUtils.checkMessageType(message);
 
         try {
             Destination replyDest = message.getJMSReplyTo();
-            //String correlation = message.getJMSCorrelationID();
-            String correlation = message.getJMSMessageID();
+            String correlation = message.getJMSCorrelationID();
             logger.info("Attempting Json parsing");
             // If the deliveryCount >=3 then perhaps the temp reply queue is broken,
             // ideally should dead letter queue the request.
@@ -59,7 +58,6 @@ public class ConsumerMessageService {
                 logger.warn("Message should be dead letter queued, as it might be poisoned");
             }else {
                 createResponse(replyDest, "Retornando com valor tratado", correlation);
-                logger.info("Retornando com valor tratado");
             }
         } catch (JMSException e) {
             logger.warn("JMSException processing request");

@@ -36,8 +36,8 @@ public class SendMessageService {
             JMSContext context = connectionFactory.createContext();
 
             TextMessage message = context.createTextMessage(msg);
-            //message.setJMSMessageID(correlation);
             message.setJMSCorrelationID(correlation);
+            logger.info(correlation);
             JMSProducer producer = context.createProducer();
             // Make sure message put on a reply queue is non-persistent so non XMS/JMS apps
             // can get the message off the temp reply queue
