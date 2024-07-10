@@ -17,7 +17,6 @@
 package com.santander.kpv.services.listeners;
 
 import com.santander.kpv.services.senders.SendMessageService;
-import com.santander.kpv.utils.MessageUtils;
 import jakarta.jms.Destination;
 import jakarta.jms.JMSException;
 import jakarta.jms.Message;
@@ -45,8 +44,6 @@ public class ConsumerMessageService {
         logger.info( this.getClass().getSimpleName());
         logger.info("Received message of type: " + message.getClass().getSimpleName());
         logger.info("Received message :" + message);
-        //MessageUtils.checkMessageType(message);
-
         try {
             Destination replyDest = message.getJMSReplyTo();
             String correlation = message.getJMSCorrelationID();
