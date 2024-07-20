@@ -39,22 +39,27 @@ public class ConsumerMessageService {
 
     @JmsListener(destination = "${app.queue.name1}")
     public void receiveRequest(Message message,
-                               @Header("JMSXDeliveryCount") Integer deliveryCount) {
+                               @Header("JMSXDeliveryCount") Integer deliveryCount) throws JMSException {
         logger.info("");
         logger.info( this.getClass().getSimpleName());
-        logger.info("Received message of type: " + message.getClass().getSimpleName());
-        logger.info("Received message :" + message);
+        logger.info("\nReceived message of type: " + message.getClass().getSimpleName());
+        logger.info("\nReceived message :\n" + message);
+        String body = message.getBody(String.class);
+        logger.info("\nReceived message.getBody(String.class) :\n" + body);
         try {
             Destination replyDest = message.getJMSReplyTo();
             String correlation = message.getJMSCorrelationID();
-            logger.info("Attempting Json parsing");
+            logger.info("setJMSCorrelationID(UUID.randomUUID().toString()) " +  message.getJMSCorrelationID());
+            System.out.println("messageSelector: " + correlation);
             // If the deliveryCount >=3 then perhaps the temp reply queue is broken,
             // ideally should dead letter queue the request.
             if (3 <= deliveryCount) {
                 logger.warn("Message delivered " + deliveryCount + " times.");
                 logger.warn("Message should be dead letter queued, as it might be poisoned");
             }else {
-                createResponse(replyDest, "Retornando com valor tratado", correlation);
+                if (!body.equals("nao envia")){
+                    createResponse(replyDest, "Retornando com valor tratado com : " + body, correlation);
+                }
             }
         } catch (JMSException e) {
             logger.warn("JMSException processing request");
